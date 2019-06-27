@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <!--扫描注解包-->
+    <context:component-scan base-package="com.library.service.impl,com.library.dao.impl"/>
+
+    <!--配置文件加载 jdbc.properties-->
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:jdbc.properties" />
+    </bean>
+
+
+    <!-- 数据源
+	配置c3p0 连接池
+	作用：预先在缓冲池中放入一定数量的连接，当需要建立数据库连接时，只需从“缓冲池”中取出一个，使用完毕之后再放回去。
+数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是重新建立一个。
+    -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <property name="user" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <!-- 请求超时时间 -->
+
+        <!-- 每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 -->
+        <property name="idleConnectionTestPeriod" value="30" />
+        <!-- 连接数据库连接池最大空闲时间 -->
+        <property name="maxIdleTime" value="30" />
+        <!-- 连接池初始化连接数 -->
+        <property name="initialPoolSize" value="5" />
+        <property name="minPoolSize" value="5" />
+        <property name="maxPoolSize" value="200" />
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+        <property name="acquireIncrement" value="5" />
+    </bean>
+
+    <!-- 配置hibernate5的SessionFactory -->
+    <bean id="sessionFactory" name="sessionFactory"
+                class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.format_sql">true </prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <!--它包含4个属性:
+			    * create : 会根据你的model类来生成表,但是每次运行都会删除上一次的表,重新生成表,哪怕两次没有任何改变
+			    * create-drop : 根据model类生成表,但是sessionFactory一关闭,表就自动删除
+			    * update : 最常用的属性，也根据model类生成表,即使表结构改变了,表中的行仍然存在,不会删除以前的行
+			    * validate : 验证，只会和数据库中的表进行比较,不会创建新表,但是会插入新值
+                 -->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <!-- 扫描hibernate注解配置的entity -->
+        <property name="packagesToScan" value="com.library.entity" />
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <!--这两个一样-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 配置事务增强处理Bean，指定事务管理器 -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <!-- 配置详细事务处理语义 -->
+        <tx:attributes>
+            <tx:method name="insert*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="load*" propagation="SUPPORTS" read-only="true" />
+
+            <!-- 其他采用默认事务方式 -->
+            <tx:method name="*" />
+
+        </tx:attributes>
+    </tx:advice>
+
+
+</beans>

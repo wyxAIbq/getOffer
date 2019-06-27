@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map>
+          <unit-entry name="sessionFactory" />
+        </datasource-map>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/spring/applicationContext.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/spring/dispatch-servlet.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
+    <facet type="JRebel" name="JRebel">
+      <configuration>
+        <option name="deleteUnindexed" value="false" />
+        <option name="httpAuthEnabled" value="false" />
+        <option name="httpPassword" />
+        <option name="httpUsername" />
+        <option name="ideModuleStorage">
+          <map>
+            <entry key="com.zeroturnaround.jrebel.FormatVersion" value="7.0.0" />
+            <entry key="com.zeroturnaround.jrebel.remoting.DeleteUnindexedFiles" value="false" />
+            <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerPreviousEnabledSelection" value="instance" />
+            <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerSelection" value="instance" />
+            <entry key="jrebelEnabled" value="true" />
+            <entry key="lastExternalPluginCheckTime" value="1559547519082" />
+          </map>
+        </option>
+        <option name="masterModuleName" />
+        <option name="overrideStandardXmlFolder" value="false" />
+        <option name="remotingEnabled" value="false" />
+        <option name="secure" value="true" />
+        <option name="url" />
+        <option name="xmlDir" />
+      </configuration>
+    </facet>
+  </component>
+</module>
